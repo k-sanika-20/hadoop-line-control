@@ -1,0 +1,26 @@
+# Generated telemetry and job output - never commit these
+data/*
+!data/.gitkeep
+artifacts/*
+!artifacts/.gitkeep
+out/
+
+# Java build
+jobs/target/
+*.jar
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Editors / OS
+.idea/
+.vscode/
+*.iml
+Thumbs.db
+desktop.ini
+
+!artifacts/policy_B.json
+!artifacts/results.json

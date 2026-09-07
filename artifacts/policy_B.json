@@ -1,0 +1,54 @@
+{
+  "policy_id": "B-mined",
+  "provenance": "derived by MapReduce from run=baseline: control limits from J3, PM intervals from J4 degradation slopes (target rise 15%), buffers from the J2 constraint",
+  "stations": {
+    "S01": {
+      "speed_setpoint": 1.0,
+      "torque_lcl": 25.238,
+      "torque_ucl": 32.807,
+      "pm_interval_cycles": 6177,
+      "buffer_capacity": 8,
+      "ideal_cycle_s": 11.0
+    },
+    "S02": {
+      "speed_setpoint": 1.0,
+      "torque_lcl": 38.214,
+      "torque_ucl": 56.241,
+      "pm_interval_cycles": 3139,
+      "buffer_capacity": 12,
+      "ideal_cycle_s": 12.5
+    },
+    "S03": {
+      "speed_setpoint": 1.0,
+      "torque_lcl": 34.733,
+      "torque_ucl": 47.935,
+      "pm_interval_cycles": 3888,
+      "buffer_capacity": 12,
+      "ideal_cycle_s": 14.8
+    },
+    "S04": {
+      "speed_setpoint": 1.0,
+      "torque_lcl": 27.56,
+      "torque_ucl": 47.101,
+      "pm_interval_cycles": 1478,
+      "buffer_capacity": 8,
+      "ideal_cycle_s": 12.0
+    },
+    "S05": {
+      "speed_setpoint": 1.0,
+      "torque_lcl": 15.877,
+      "torque_ucl": 20.843,
+      "pm_interval_cycles": 12143,
+      "buffer_capacity": 8,
+      "ideal_cycle_s": 10.5
+    },
+    "S06": {
+      "speed_setpoint": 1.0,
+      "torque_lcl": 21.468,
+      "torque_ucl": 28.127,
+      "pm_interval_cycles": 7353,
+      "buffer_capacity": 8,
+      "ideal_cycle_s": 11.2
+    }
+  }
+}

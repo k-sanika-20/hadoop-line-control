@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>lc</groupId>
+  <artifactId>line-control-jobs</artifactId>
+  <version>1.0</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- MUST be 8: the apache/hadoop:3.4.1 image runs a Java 8 JRE, so classes
+         compiled to a newer bytecode level fail at submit time with
+         UnsupportedClassVersionError. "release" (rather than source/target) also
+         pins the platform API, so javac cannot silently let a Java 11 method
+         through that the cluster's Java 8 runtime does not have. -->
+    <maven.compiler.release>8</maven.compiler.release>
+    <hadoop.version>3.4.1</hadoop.version>
+  </properties>
+
+  <dependencies>
+    <!-- provided: the cluster already has these on the classpath, so the jar stays small -->
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+      <version>${hadoop.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>line-control-jobs</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.1</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <!-- `hadoop jar <jar> oee ...` reads Main-Class from here and hands
+                   the remaining arguments to ProgramDriver. Without it, hadoop
+                   treats the first argument as a class name and throws
+                   ClassNotFoundException: oee -->
+              <mainClass>lc.hadoop.Driver</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

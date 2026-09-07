@@ -1,0 +1,54 @@
+{
+  "policy_id": "B-oracle",
+  "provenance": "reference only: PM intervals derived from the simulator's true wear rates. Use to sanity-check what a well-mined policy should recover; it is NOT the deliverable.",
+  "stations": {
+    "S01": {
+      "speed_setpoint": 1.0,
+      "torque_lcl": 23.6,
+      "torque_ucl": 32.4,
+      "pm_interval_cycles": 6061,
+      "buffer_capacity": 8,
+      "ideal_cycle_s": 11.0
+    },
+    "S02": {
+      "speed_setpoint": 1.0,
+      "torque_lcl": 34.8,
+      "torque_ucl": 53.2,
+      "pm_interval_cycles": 3030,
+      "buffer_capacity": 8,
+      "ideal_cycle_s": 12.5
+    },
+    "S03": {
+      "speed_setpoint": 1.0,
+      "torque_lcl": 32.2,
+      "torque_ucl": 45.8,
+      "pm_interval_cycles": 3704,
+      "buffer_capacity": 8,
+      "ideal_cycle_s": 14.8
+    },
+    "S04": {
+      "speed_setpoint": 1.0,
+      "torque_lcl": 27.2,
+      "torque_ucl": 38.8,
+      "pm_interval_cycles": 1449,
+      "buffer_capacity": 8,
+      "ideal_cycle_s": 12.0
+    },
+    "S05": {
+      "speed_setpoint": 1.0,
+      "torque_lcl": 14.8,
+      "torque_ucl": 21.2,
+      "pm_interval_cycles": 11111,
+      "buffer_capacity": 8,
+      "ideal_cycle_s": 10.5
+    },
+    "S06": {
+      "speed_setpoint": 1.0,
+      "torque_lcl": 20.0,
+      "torque_ucl": 28.0,
+      "pm_interval_cycles": 6667,
+      "buffer_capacity": 8,
+      "ideal_cycle_s": 11.2
+    }
+  }
+}

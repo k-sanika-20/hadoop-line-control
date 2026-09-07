@@ -1,0 +1,155 @@
+# Hadoop Line Control - 6-container HDFS + YARN cluster.
+#
+# Sized to run inside an 8 GB Docker allocation on a 16 GB laptop:
+#   namenode 768m + resourcemanager 768m + 3 workers (datanode 400m + nodemanager 600m each)
+#   plus 1024 MB of YARN task capacity per worker.
+#
+# Config is mounted file-by-file into the image's own conf directory so that
+# hadoop-env.sh, log4j.properties and the rest of the image defaults survive.
+
+name: hadoop-line-control
+
+networks:
+  hadoop:
+    driver: bridge
+
+volumes:
+  nn-data:
+  dn1-data:
+  dn2-data:
+  dn3-data:
+
+services:
+
+  namenode:
+    image: apache/hadoop:3.4.1
+    container_name: namenode
+    hostname: namenode
+    user: root
+    networks: [hadoop]
+    ports:
+      - "9870:9870"   # NameNode web UI
+      - "8020:8020"   # HDFS RPC
+    environment:
+      HADOOP_HEAPSIZE_MAX: 768m
+    volumes:
+      - nn-data:/hadoop/dfs/name
+      - ./hadoop-conf/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./hadoop-conf/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./hadoop-conf/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml:ro
+      - ./hadoop-conf/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml:ro
+    command:
+      - bash
+      - -c
+      - |
+        if [ ! -d /hadoop/dfs/name/current ]; then
+          echo ">>> formatting namenode (first run)"
+          hdfs namenode -format -force -nonInteractive
+        fi
+        exec hdfs namenode
+
+  resourcemanager:
+    image: apache/hadoop:3.4.1
+    container_name: resourcemanager
+    hostname: resourcemanager
+    user: root
+    networks: [hadoop]
+    depends_on: [namenode]
+    ports:
+      - "8088:8088"   # ResourceManager web UI
+    environment:
+      HADOOP_HEAPSIZE_MAX: 768m
+    volumes:
+      - ./hadoop-conf/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./hadoop-conf/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./hadoop-conf/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml:ro
+      - ./hadoop-conf/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml:ro
+    command: ["yarn", "resourcemanager"]
+
+  worker1:
+    image: apache/hadoop:3.4.1
+    container_name: worker1
+    hostname: worker1
+    user: root
+    networks: [hadoop]
+    depends_on: [namenode, resourcemanager]
+    ports:
+      - "8041:8042"
+    volumes:
+      - dn1-data:/hadoop/dfs/data
+      - ./hadoop-conf/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./hadoop-conf/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./hadoop-conf/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml:ro
+      - ./hadoop-conf/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml:ro
+    command:
+      - bash
+      - -c
+      - |
+        HADOOP_HEAPSIZE_MAX=400m hdfs datanode &
+        HADOOP_HEAPSIZE_MAX=600m yarn nodemanager &
+        wait
+
+  worker2:
+    image: apache/hadoop:3.4.1
+    container_name: worker2
+    hostname: worker2
+    user: root
+    networks: [hadoop]
+    depends_on: [namenode, resourcemanager]
+    ports:
+      - "8042:8042"
+    volumes:
+      - dn2-data:/hadoop/dfs/data
+      - ./hadoop-conf/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./hadoop-conf/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./hadoop-conf/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml:ro
+      - ./hadoop-conf/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml:ro
+    command:
+      - bash
+      - -c
+      - |
+        HADOOP_HEAPSIZE_MAX=400m hdfs datanode &
+        HADOOP_HEAPSIZE_MAX=600m yarn nodemanager &
+        wait
+
+  worker3:
+    image: apache/hadoop:3.4.1
+    container_name: worker3
+    hostname: worker3
+    user: root
+    networks: [hadoop]
+    depends_on: [namenode, resourcemanager]
+    ports:
+      - "8043:8042"
+    volumes:
+      - dn3-data:/hadoop/dfs/data
+      - ./hadoop-conf/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./hadoop-conf/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./hadoop-conf/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml:ro
+      - ./hadoop-conf/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml:ro
+    command:
+      - bash
+      - -c
+      - |
+        HADOOP_HEAPSIZE_MAX=400m hdfs datanode &
+        HADOOP_HEAPSIZE_MAX=600m yarn nodemanager &
+        wait
+
+  # Where you run hdfs/yarn/mapred commands from. Keeps the cluster containers clean.
+  client:
+    image: apache/hadoop:3.4.1
+    container_name: client
+    hostname: client
+    user: root
+    networks: [hadoop]
+    depends_on: [namenode, resourcemanager]
+    environment:
+      HADOOP_HEAPSIZE_MAX: 512m
+    volumes:
+      - ./hadoop-conf/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./hadoop-conf/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./hadoop-conf/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml:ro
+      - ./hadoop-conf/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml:ro
+      - ./jobs:/work/jobs
+      - ./data:/work/data
+    command: ["sleep", "infinity"]

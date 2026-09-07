@@ -1,0 +1,42 @@
+{
+  "policy_a": "A-baseline",
+  "policy_b": "B-mined",
+  "seeds": 20,
+  "days": 30,
+  "split_day": 20,
+  "metrics": {
+    "throughput_good_parts": {
+      "label": "throughput (good parts)",
+      "direction": "higher",
+      "a_mean": 17259.45,
+      "b_mean": 17433.5,
+      "delta_mean": 174.05,
+      "delta_ci95": 124.7495,
+      "delta_pct": 1.008,
+      "significant": true,
+      "verdict": "B better"
+    },
+    "total_unplanned_downtime_h": {
+      "label": "unplanned downtime (h)",
+      "direction": "lower",
+      "a_mean": 4.776,
+      "b_mean": 3.9125,
+      "delta_mean": -0.8635,
+      "delta_ci95": 0.5792,
+      "delta_pct": -18.08,
+      "significant": true,
+      "verdict": "B better"
+    },
+    "line_oee": {
+      "label": "line OEE",
+      "direction": "higher",
+      "a_mean": 0.9219,
+      "b_mean": 0.9175,
+      "delta_mean": -0.0043,
+      "delta_ci95": 0.0013,
+      "delta_pct": -0.471,
+      "significant": true,
+      "verdict": "B WORSE"
+    }
+  }
+}
