@@ -5,7 +5,10 @@
 #
 # The bash below is a LITERAL here-string (@'...'@) with __RUN__ substituted
 # afterwards. An expandable here-string (@"..."@) would let PowerShell interpret
-# $(...) and $VAR meant for bash and run them on Windows instead.
+# $(...) and $VAR meant for bash and run them on Windows instead. It must not
+# contain double quotes either: Windows PowerShell 5.1 does not escape them when
+# passing an argument to a native program, so the first one silently truncates
+# the script that bash receives.
 param([Parameter(Mandatory = $true)][string]$Run)
 $ErrorActionPreference = 'Continue'
 . (Join-Path $PSScriptRoot "_common.ps1")
@@ -32,13 +35,13 @@ hdfs dfs -put '/work/data/run=__RUN__/telemetry'   '/factory/run=__RUN__/telemet
 hdfs dfs -put '/work/data/run=__RUN__/part_events' '/factory/run=__RUN__/part_events'
 hdfs dfs -put '/work/data/run=__RUN__/maintenance' '/factory/run=__RUN__/maintenance'
 echo
-echo "--- what landed in HDFS ---"
+echo --- what landed in HDFS ---
 hdfs dfs -du -h -s '/factory/run=__RUN__'/*
 echo
-echo "--- block placement of one telemetry file ---"
+echo --- block placement of one telemetry file ---
 F=$(hdfs dfs -ls -R '/factory/run=__RUN__/telemetry' | awk '/part-0.csv/ {print $NF; exit}')
-hdfs fsck "$F" -files -blocks -locations | tail -8
-'@ -replace '__RUN__', $Run
+hdfs fsck $F -files -blocks -locations | tail -8
+'@ -replace '__RUN__', $Run -replace "`r", ''
 
     Write-Host "putting into HDFS ..." -ForegroundColor Cyan
     Invoke-Checked -What "hdfs put" -Script {

@@ -52,11 +52,13 @@ try {
 set -euo pipefail
 rm -rf /work/data/mined
 for j in oee bottleneck limits degradation; do
-  mkdir -p "/work/data/mined/$j"
-  hdfs dfs -get '/factory/mined/run=__RUN__'/"$j"/part-* "/work/data/mined/$j/"
+  mkdir -p /work/data/mined/$j
+  hdfs dfs -get '/factory/mined/run=__RUN__'/$j/part-* /work/data/mined/$j/
 done
 find /work/data/mined -type f | sort
-'@ -replace '__RUN__', $Run
+'@ -replace '__RUN__', $Run -replace "`r", ''
+    # No double quotes in $fetch: PowerShell 5.1 passes them to docker unescaped
+    # and the bash script is cut off at the first one.
 
     Write-Host "`ncollecting job output ..." -ForegroundColor Cyan
     Invoke-Checked -What "hdfs get" -Script {
