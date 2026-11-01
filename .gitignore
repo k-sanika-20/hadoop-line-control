@@ -28,3 +28,7 @@ desktop.ini
 # Job output and figures are small, and the dashboard reads them
 !artifacts/mined/
 !artifacts/figures/
+
+# Report and study guide: kept locally, not in the repo
+report/
+~$*
