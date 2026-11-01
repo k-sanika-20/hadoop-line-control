@@ -33,7 +33,7 @@ import line_sim as LS
 
 METRICS = [
     ("throughput_good_parts", "throughput (good parts)", "higher"),
-    ("total_unplanned_downtime_h", "unplanned downtime (h)", "lower"),
+    ("total_downtime_h", "maintenance downtime (h)", "lower"),
     ("line_oee", "line OEE", "higher"),
 ]
 

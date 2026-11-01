@@ -16,8 +16,8 @@
       "significant": true,
       "verdict": "B better"
     },
-    "total_unplanned_downtime_h": {
-      "label": "unplanned downtime (h)",
+    "total_downtime_h": {
+      "label": "maintenance downtime (h)",
       "direction": "lower",
       "a_mean": 4.776,
       "b_mean": 3.9125,

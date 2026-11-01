@@ -58,9 +58,12 @@ Mined on days 1–20, scored on days 21–30, same seeds in both arms:
 | Metric | A · static baseline | B · mined | Δ | 95% CI | Verdict |
 |---|---|---|---|---|---|
 | Throughput (good parts) | 17259.5 | 17433.5 | +174.1 | ±124.7 | better, **+1.01%** |
-| Unplanned downtime (h) | 4.776 | 3.913 | −0.864 | ±0.579 | better, **−18.08%** |
+| Maintenance downtime (h) | 4.776 | 3.913 | −0.864 | ±0.579 | better, **−18.08%** |
 | Line OEE | 0.922 | 0.918 | −0.004 | ±0.001 | worse, −0.47% |
  
+Maintenance downtime counts every stop – planned services and breakdowns alike – since both take
+the station off the line.
+
 Mined maintenance intervals span **1478 to 12143 cycles** — an 8× spread recovered from telemetry
 alone, against a baseline that set every station to 3000.
  
@@ -81,7 +84,7 @@ in the plant model so the jobs have a known answer to be checked against.
  
 ## The first mined policy was worse than the baseline
  
-Run 1 scored **−3.8% throughput and +21.6% unplanned downtime** against the static policy. Two
+Run 1 scored **−3.8% throughput and +21.6% maintenance downtime** against the static policy. Two
 independent measurement errors, multiplying:
  
 **1. Stopped machines still emit telemetry.** A halted station reports near-zero torque, and stops

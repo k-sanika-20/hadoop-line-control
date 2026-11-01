@@ -426,7 +426,7 @@ def summarise(policy, stations, events, horizon_s, days):
         "throughput_good_parts": throughput,
         "throughput_per_day": round(throughput / days, 1),
         "line_oee": round(sum(s["oee"] for s in per.values()) / len(per), 4),
-        "total_unplanned_downtime_h": round(
+        "total_downtime_h": round(
             sum(s["down_ms"] for s in per.values()) / 3.6e6, 2
         ),
         "bottleneck_by_ground_truth": bottleneck,
@@ -492,7 +492,7 @@ def main():
     print(f"throughput      {summary['throughput_good_parts']:,} good parts "
           f"({summary['throughput_per_day']}/day)")
     print(f"line OEE        {summary['line_oee']:.3f}")
-    print(f"downtime        {summary['total_unplanned_downtime_h']} h")
+    print(f"downtime        {summary['total_downtime_h']} h")
     print(f"bottleneck      {summary['bottleneck_by_ground_truth']} (ground truth)")
     print()
     print(f"{'station':<8}{'OEE':>7}{'avail':>7}{'perf':>7}{'qual':>7}{'defect%':>9}"

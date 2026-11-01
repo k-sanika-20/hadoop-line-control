@@ -5,7 +5,7 @@
   "throughput_good_parts": 12263,
   "throughput_per_day": 1751.9,
   "line_oee": 0.9276,
-  "total_unplanned_downtime_h": 2.39,
+  "total_downtime_h": 2.39,
   "bottleneck_by_ground_truth": "S03",
   "stations": {
     "S01": {

@@ -108,8 +108,8 @@ with tabs[0]:
                 f"utilisation {S.utilisation.max():.1%}", delta_color="off")
     c[2].metric("Throughput, mined vs baseline", f"{m['throughput_good_parts']['b_mean']:,.0f}",
                 f"{m['throughput_good_parts']['delta_pct']:+.2f}%")
-    c[3].metric("Unplanned downtime", f"{m['total_unplanned_downtime_h']['b_mean']:.2f} h",
-                f"{m['total_unplanned_downtime_h']['delta_pct']:+.1f}%", delta_color="inverse")
+    c[3].metric("Maintenance downtime", f"{m['total_downtime_h']['b_mean']:.2f} h",
+                f"{m['total_downtime_h']['delta_pct']:+.1f}%", delta_color="inverse")
 
     st.subheader("The line")
     cols = st.columns(len(V.STATIONS))

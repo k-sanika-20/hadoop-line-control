@@ -136,11 +136,11 @@ is not a result.
 | metric | A baseline | B oracle | delta | 95% CI | verdict |
 |---|---|---|---|---|---|
 | throughput (good parts) | 17259.5 | 17434.4 | +174.9 | ±103.8 | B better (+1.01%) |
-| unplanned downtime (h) | 4.78 | 3.90 | −0.88 | ±0.50 | B better (−18.34%) |
+| maintenance downtime (h) | 4.78 | 3.90 | −0.88 | ±0.50 | B better (−18.34%) |
 | line OEE | 0.922 | 0.920 | −0.002 | ±0.001 | **B worse** (−0.23%) |
 
 The mixed result is the honest one and worth presenting as-is. The win is in
-unplanned downtime, not throughput. OEE goes very slightly *down* because
+maintenance downtime, not throughput. OEE goes very slightly *down* because
 lengthening the maintenance interval on the slow-wearing stations saves stop
 time but lets wear accumulate, which inflates cycle time and costs performance.
 That trade-off is a real finding about the plant, and a result table where every
