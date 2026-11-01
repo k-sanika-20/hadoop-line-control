@@ -1,9 +1,9 @@
 # The simulator
 
 `sim/line_sim.py` is a discrete-event model of a six-station tandem line with
-finite buffers. It replaces the throwaway `random.gauss` seed data: cycle times,
-defects, faults and telemetry now come from a plant that has structure, and that
-structure is what the MapReduce jobs are supposed to discover.
+finite buffers. Cycle times, defects, faults and telemetry come from a plant that
+has structure, and that structure is what the MapReduce jobs are supposed to
+discover.
 
 ## Run it
 
@@ -14,8 +14,9 @@ python sim\line_sim.py --policy policy_A.json --run baseline --days 30 --hz 5
 ```
 
 `--days 30 --hz 5` produces roughly 104M telemetry rows (~4.7 GB). Start with
-`--days 7 --hz 1` (~5M rows) while you are still debugging jobs, then scale up
-once they are correct — a wrong job is much cheaper to find on 200 MB.
+`--days 7 --hz 1` (~4.8M rows) to verify the jobs, then scale up once they are
+correct — a wrong job is much cheaper to find on 200 MB. The reported results use
+the 7-day, 1 Hz run.
 
 Output is plain CSV, deliberately. Gzip is not splittable, so a compressed file
 is read by exactly one mapper and you would lose the block-level parallelism
@@ -31,11 +32,11 @@ ts_ms,station,signal,value
 
 `signal` is one of `torque`, `motor_temp`, `vibration`, `spindle_load`.
 
-> **This is the change that will break your current jobs.** There are now four
-> signals interleaved in one file. `ControlLimits` must filter to
-> `signal == "torque"` before computing mean and sigma, or it will pool torque
-> (~40), temperature (~60), vibration (~0.5) and load (~62) into one meaningless
-> distribution. Filtering in the mapper also drops 75% of the shuffle volume.
+> Four signals are interleaved in one file, so `ControlLimitsJob` (J3) filters to
+> `signal == "torque"` in the mapper before computing mean and sigma. Without
+> that it would pool torque (~40), temperature (~60), vibration (~0.5) and load
+> (~62) into one meaningless distribution. Filtering map-side also drops 75% of
+> the shuffle volume.
 
 **`part_events/dt=<date>/part-0.csv`**
 
@@ -101,8 +102,9 @@ tuning and testing on the same data. `--seeds 20` runs paired seeds and reports
 
 `policy_B_oracle.json` is a **reference, not a deliverable** — its PM intervals
 are derived from the simulator's true wear rates, so it shows roughly what a
-well-mined policy should recover. Use it to check whether your J5 output is in
-the right region. Do not submit it as a result.
+well-mined policy should recover. It is used only to check that the mined
+`artifacts/policy_B.json` (from `build_policy.py`) lands in the right region; it
+is not a result.
 
 ## What the oracle policy actually achieves
 

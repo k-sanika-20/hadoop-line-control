@@ -137,6 +137,7 @@ Two deliberate choices worth stating:
 - **J3 uses Chan's parallel variance**, not `(sumSq − sum²/n)/n`. The textbook form subtracts two
   large nearly-equal numbers and can return a negative variance on data centred far from zero — like
   motor temperature at ~60.
+
 **Policy synthesis is not a MapReduce job.** `sim/build_policy.py` consumes the four job outputs —
 about two dozen rows — and writes the next `policy.json`. Forcing kilobytes through YARN to produce
 kilobytes would be cargo-cult Hadoop. The batch tier is where the *aggregation* happens; policy
@@ -153,6 +154,10 @@ deliberate, not defaults.
  
 - NameNode UI — http://localhost:9870
 - ResourceManager UI — http://localhost:8088
+
+`.\scripts\gate.ps1` proves a stock job and the project jar both run on YARN; `.\scripts\down.ps1`
+stops the cluster (`-Wipe` also deletes HDFS data).
+
 ## Reproducing
  
 Requires Docker Desktop (≥8 GB allocated), Python 3.10+, and Git. **No local JDK needed** — the

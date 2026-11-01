@@ -79,7 +79,7 @@ find /work/data/mined -type f | sort
     Write-Host "`nCheck against data\run=$Run\run_summary.json:" -ForegroundColor Yellow
     Write-Host "  J2 must name S03 as the highest-utilisation station" -ForegroundColor Yellow
     Write-Host "  J4 must give S04 the steepest degradation slope" -ForegroundColor Yellow
-    Write-Host "  J1 OEE per station must now MATCH the summary (it did not before)" -ForegroundColor Yellow
+    Write-Host "  J1 OEE per station must MATCH the summary exactly" -ForegroundColor Yellow
     Pop-Location; exit 0
 }
 catch { Write-Fail $_.Exception.Message; Pop-Location; exit 1 }
