@@ -1,0 +1,2 @@
+S02	cycles=12410	utilisation=0.8165	idle_s=36781.9	blocked_s=36285.4	starved_s=496.5	mean_cycle_s=13.190	longest_blocked_run=525
+S05	cycles=12410	utilisation=0.6595	idle_s=68304.0	blocked_s=812.8	starved_s=67491.2	mean_cycle_s=10.662	longest_blocked_run=14

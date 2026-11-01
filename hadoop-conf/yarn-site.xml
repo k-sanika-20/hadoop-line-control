@@ -53,4 +53,10 @@
     <value>true</value>
   </property>
 
+  <property>
+    <name>yarn.nm.liveness-monitor.expiry-interval-ms</name>
+    <value>60000</value>
+    <description>A silent nodemanager is declared lost after 60 s (default 10 min). Its containers are then reported failed and the MapReduce AM re-runs those tasks elsewhere - the YARN half of scripts/failover.ps1.</description>
+  </property>
+
 </configuration>

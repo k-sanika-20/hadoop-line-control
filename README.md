@@ -76,7 +76,7 @@ in the plant model so the jobs have a known answer to be checked against.
 | Check | Planted | Mined | |
 |---|---|---|---|
 | Line constraint (J2) | S03 | **S03** | utilisation 0.957, highest on the line |
-| Fastest degradation (J4) | S04 | **S04** | slope 0.763 torque/h, 6.9× the slowest station |
+| Fastest degradation (J4) | S04 | **S04** | slope 0.763 Nm/h, 15× the slowest station (S05, 0.050 Nm/h) |
 | Per-station OEE (J1) | `run_summary.json` | **exact match** | 0.957 / 0.919 / 0.934 / 0.823 / 0.974 / 0.959 |
  
 ## The first mined policy was worse than the baseline
@@ -127,7 +127,7 @@ Measured on the 7-day run:
 | J3 mapper-side signal filtering | **75.1%** of rows dropped before the network |
 | J1 combiner | 74,460 records → 42 |
 | J2 combiner | **0** — deliberately, to preserve secondary-sort ordering |
-| Data locality (J4) | 33 of 42 map tasks data-local |
+| Data locality (J4) | 33–42 of 42 map tasks data-local, depending on where YARN places them (42/42 on the latest run) |
 | Non-running samples excluded | 8,587 |
  
 Two deliberate choices worth stating:
@@ -158,6 +158,24 @@ deliberate, not defaults.
 `.\scripts\gate.ps1` proves a stock job and the project jar both run on YARN; `.\scripts\down.ps1`
 stops the cluster (`-Wipe` also deletes HDFS data).
 
+### Fault tolerance, demonstrated
+
+`.\scripts\failover.ps1` starts J3, `docker kill`s `worker2` (DataNode and NodeManager together, no
+clean shutdown) while the job is running, and checks what happens. Measured:
+
+| | |
+|---|---|
+| Killed at | J3 at 2% map progress |
+| NameNode declares the DataNode dead | ~65 s after the kill |
+| Map tasks re-run elsewhere by YARN | 3 (45 launched for 42 splits) |
+| J3 completes | 172 s after the kill, **output byte-identical** to the undisturbed run |
+| Under-replicated blocks | 4, back to 0 within ~10 s; every block again has 2 replicas |
+
+Detection is tuned to ~60 s (`dfs.namenode.heartbeat.recheck-interval`,
+`yarn.nm.liveness-monitor.expiry-interval-ms`) so the demo fits in a viva; Hadoop's 10-minute
+default exists to ride out GC pauses on a real cluster. Keep the dashboard's *Cluster* tab open
+with auto-refresh on to watch it happen.
+
 ## Reproducing
  
 Requires Docker Desktop (≥8 GB allocated), Python 3.10+, and Git. **No local JDK needed** — the
@@ -178,6 +196,28 @@ On PowerShell 5.1, prefix each script with `powershell -ExecutionPolicy Bypass -
 Scale up with `--days 30 --hz 5` (~104M rows, ~4.7 GB) once the jobs are verified on the small run.
 Output is plain CSV, deliberately: gzip is not splittable, so a compressed file is read by exactly
 one mapper and you lose the block-level parallelism that is the whole reason for HDFS.
+
+## Dashboard and figures
+
+```powershell
+pip install -r requirements.txt
+streamlit run dashboard\app.py        # http://localhost:8501
+python sim\plots.py                   # report figures -> artifacts\figures\
+```
+
+The dashboard reads the committed job output in `artifacts/`, so it works without the cluster:
+
+- **Overview** – headline results and the six stations at a glance
+- **Line analytics** – busy / blocked / starved time per station (J2) and the OEE breakdown (J1)
+- **Wear & SPC** – degradation curves (J4) and mined vs baseline control limits (J3)
+- **Policy** – every setpoint Hadoop changed, A vs B
+- **Closed loop** – the A/B result, plus *what-if* sliders that re-run policy synthesis with a
+  different maintenance target or σ and score the new policy on the simulator live
+- **Validation** – every mined value checked against the simulator's planted ground truth
+- **Cluster** – live HDFS and YARN state from the NameNode and ResourceManager REST APIs
+
+`sim/plots.py` writes five static figures for the report: degradation curves, station time split,
+PM intervals A vs B, the A/B result with confidence intervals, and the OEE breakdown.
  
 ## Layout
  
@@ -185,11 +225,12 @@ one mapper and you lose the block-level parallelism that is the whole reason for
 docker-compose.yml     6-container HDFS + YARN cluster
 hadoop-conf/           site XMLs, mounted into every container
 jobs/                  Java MapReduce jobs (Maven)
-sim/                   line simulator, policy synthesis, A/B harness
-scripts/               PowerShell helpers
+sim/                   line simulator, policy synthesis, A/B harness, report figures
+dashboard/             Streamlit dashboard
+scripts/               PowerShell helpers (cluster, ingest, mine, gate, failover)
 policy_A.json          static baseline policy
 policy_B_oracle.json   reference policy from the simulator's true wear rates - NOT a result
-artifacts/             mined policy and results
+artifacts/             mined policy, MapReduce output, A/B results, figures
 data/                  generated telemetry - gitignored
 ```
  

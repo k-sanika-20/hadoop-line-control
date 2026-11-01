@@ -122,32 +122,27 @@ def load_degradation_slopes(mined):
     return slopes
 
 
-def main():
-    ap = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--mined", default="artifacts/mined",
-                    help="directory holding oee/ bottleneck/ limits/ degradation/ job output")
-    ap.add_argument("--base", default="policy_A.json")
-    ap.add_argument("--out", default="artifacts/policy_B.json")
-    ap.add_argument("--sigma", type=float, default=3.0)
-    args = ap.parse_args()
-
-    base = json.load(open(args.base))
-    limits = load_limits(args.mined)
-    bott = load_bottleneck(args.mined)
-    oee = load_oee(args.mined)
-    slopes = load_degradation_slopes(args.mined)
+def synthesise(base, mined, sigma=3.0, target_rise=TARGET_TORQUE_RISE):
+    """
+    Build the next policy from the job outputs under `mined`. Returns a dict
+    holding the policy, the per-station changes, and the job outputs it was
+    built from. Shared by main() and the dashboard's what-if controls.
+    """
+    limits = load_limits(mined)
+    bott = load_bottleneck(mined)
+    oee = load_oee(mined)
+    slopes = load_degradation_slopes(mined)
 
     if not limits:
-        raise SystemExit(f"no limits output under {args.mined}/limits - did J3 run?")
+        raise SystemExit(f"no limits output under {mined}/limits - did J3 run?")
     if not bott:
-        raise SystemExit(f"no bottleneck output under {args.mined}/bottleneck - did J2 run?")
+        raise SystemExit(f"no bottleneck output under {mined}/bottleneck - did J2 run?")
 
     policy = json.loads(json.dumps(base))
     policy["policy_id"] = "B-mined"
     policy["provenance"] = (
         "derived by MapReduce from run=baseline: control limits from J3, "
-        f"PM intervals from J4 degradation slopes (target rise {TARGET_TORQUE_RISE:.0%}), "
+        f"PM intervals from J4 degradation slopes (target rise {target_rise:.0%}), "
         "buffers from the J2 constraint"
     )
 
@@ -164,8 +159,8 @@ def main():
 
         # J3 -> control limits
         if sid in limits:
-            st["torque_lcl"] = round(limits[sid]["mean"] - args.sigma * limits[sid]["sd"], 3)
-            st["torque_ucl"] = round(limits[sid]["mean"] + args.sigma * limits[sid]["sd"], 3)
+            st["torque_lcl"] = round(limits[sid]["mean"] - sigma * limits[sid]["sd"], 3)
+            st["torque_ucl"] = round(limits[sid]["mean"] + sigma * limits[sid]["sd"], 3)
 
         # J4 -> preventive-maintenance interval
         if sid in slopes and sid in bott and sid in limits:
@@ -180,7 +175,7 @@ def main():
             # which compounded with the slope error to give intervals ~2x too long.
             wall_per_cycle = cycle_s / util if util > 0 else cycle_s
             if slope > 1e-9 and fresh > 0 and wall_per_cycle > 0:
-                allowed_rise = TARGET_TORQUE_RISE * fresh
+                allowed_rise = target_rise * fresh
                 pm_hours = allowed_rise / slope
                 pm_cycles = int(round(pm_hours * 3600.0 / wall_per_cycle))
                 st["pm_interval_cycles"] = max(PM_MIN_CYCLES, min(PM_MAX_CYCLES, pm_cycles))
@@ -196,14 +191,34 @@ def main():
         if changed:
             changes.append((sid, changed))
 
+    steep = max(slopes.items(), key=lambda kv: kv[1]["slope_per_h"])[0] if slopes else "n/a"
+    return {"policy": policy, "changes": changes, "order": order,
+            "bottleneck": bottleneck, "steepest": steep,
+            "limits": limits, "bottleneck_rows": bott, "oee": oee, "slopes": slopes}
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--mined", default="artifacts/mined",
+                    help="directory holding oee/ bottleneck/ limits/ degradation/ job output")
+    ap.add_argument("--base", default="policy_A.json")
+    ap.add_argument("--out", default="artifacts/policy_B.json")
+    ap.add_argument("--sigma", type=float, default=3.0)
+    args = ap.parse_args()
+
+    base = json.load(open(args.base))
+    r = synthesise(base, args.mined, sigma=args.sigma)
+    policy, order = r["policy"], r["order"]
+    limits, bott, oee, slopes = r["limits"], r["bottleneck_rows"], r["oee"], r["slopes"]
+
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     with open(args.out, "w") as f:
         json.dump(policy, f, indent=2)
 
     # --- report -----------------------------------------------------------
-    print(f"constraint (highest utilisation): {bottleneck}")
-    steep = max(slopes.items(), key=lambda kv: kv[1]["slope_per_h"])[0] if slopes else "n/a"
-    print(f"fastest degradation (steepest slope): {steep}")
+    print(f"constraint (highest utilisation): {r['bottleneck']}")
+    print(f"fastest degradation (steepest slope): {r['steepest']}")
     print()
     print(f"{'station':<9}{'OEE':>7}{'util':>7}{'torque mu':>11}{'sigma':>8}"
           f"{'slope/h':>10}{'PM A':>8}{'PM B':>8}")

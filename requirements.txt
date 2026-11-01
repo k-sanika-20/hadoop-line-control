@@ -1,0 +1,7 @@
+# Simulator, policy synthesis and A/B harness
+numpy>=1.24
+# Report figures and dashboard
+pandas>=2.0
+matplotlib>=3.7
+streamlit>=1.45
+requests>=2.28

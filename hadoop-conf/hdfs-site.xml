@@ -44,4 +44,10 @@
     <value>true</value>
   </property>
 
+  <property>
+    <name>dfs.namenode.heartbeat.recheck-interval</name>
+    <value>15000</value>
+    <description>A datanode is declared dead after 2 x recheck + 10 x heartbeat = 60 s, not the default 10.5 min, so scripts/failover.ps1 can show re-replication live. A production cluster keeps the long default to ride out GC pauses and network blips.</description>
+  </property>
+
 </configuration>

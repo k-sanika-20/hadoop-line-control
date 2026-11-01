@@ -1,0 +1,6 @@
+S01	parts=12410	good=12267	oee=0.9572	availability=0.9952	performance=0.9730	quality=0.9885	defect_rate=0.01152	ideal_cycle_s=11.000	min_cycle_s=9.033	down_s=960.0	blocked_s=60065.5	starved_s=0.0
+S02	parts=12410	good=12087	oee=0.9186	availability=0.9952	performance=0.9477	quality=0.9740	defect_rate=0.02603	ideal_cycle_s=12.500	min_cycle_s=9.716	down_s=960.0	blocked_s=36285.4	starved_s=496.5
+S03	parts=12410	good=12181	oee=0.9344	availability=0.9952	performance=0.9565	quality=0.9815	defect_rate=0.01845	ideal_cycle_s=14.800	min_cycle_s=12.130	down_s=960.0	blocked_s=7576.1	starved_s=1005.7
+S04	parts=12410	good=12050	oee=0.8228	availability=0.9812	performance=0.8636	quality=0.9710	defect_rate=0.02901	ideal_cycle_s=12.000	min_cycle_s=10.020	down_s=3786.6	blocked_s=1114.1	starved_s=24224.7
+S05	parts=12410	good=12331	oee=0.9739	availability=0.9952	performance=0.9848	quality=0.9936	defect_rate=0.00637	ideal_cycle_s=10.500	min_cycle_s=8.499	down_s=960.0	blocked_s=812.8	starved_s=67491.2
+S06	parts=12410	good=12263	oee=0.9586	availability=0.9952	performance=0.9747	quality=0.9882	defect_rate=0.01185	ideal_cycle_s=11.200	min_cycle_s=9.163	down_s=960.0	blocked_s=0.0	starved_s=58036.3

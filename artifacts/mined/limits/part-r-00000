@@ -1,0 +1,6 @@
+S01	signal=torque	n=200640	mean=29.0222	sd=1.2615	lcl=25.2377	ucl=32.8066	min=23.5967	max=34.2466
+S02	signal=torque	n=200640	mean=47.2276	sd=3.0046	lcl=38.2139	ucl=56.2413	min=34.5272	max=58.8367
+S03	signal=torque	n=200640	mean=41.3340	sd=2.2002	lcl=34.7333	ucl=47.9347	min=32.3146	max=50.0205
+S04	signal=torque	n=197813	mean=37.3308	sd=3.2568	lcl=27.5605	ucl=47.1011	min=28.0181	max=48.9667
+S05	signal=torque	n=200640	mean=18.3600	sd=0.8276	lcl=15.8771	ucl=20.8428	min=14.6668	max=21.8348
+S06	signal=torque	n=200640	mean=24.7979	sd=1.1098	lcl=21.4684	ucl=28.1274	min=20.3503	max=30.1778

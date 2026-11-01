@@ -24,3 +24,7 @@ desktop.ini
 
 !artifacts/policy_B.json
 !artifacts/results.json
+!artifacts/run_summary.json
+# Job output and figures are small, and the dashboard reads them
+!artifacts/mined/
+!artifacts/figures/
