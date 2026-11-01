@@ -21,7 +21,7 @@
   <property>
     <name>dfs.blocksize</name>
     <value>134217728</value>
-    <description>128 MB. Telemetry files are sized well above this so a single file splits across nodes.</description>
+    <description>128 MB, the Hadoop default. Each telemetry file (one station-day) is ~3.5 MB at 1 Hz and ~17 MB at 5 Hz, so it is a single block and a single split: parallelism comes from the 42 files (42 map tasks), not from splitting one file.</description>
   </property>
 
   <property>
