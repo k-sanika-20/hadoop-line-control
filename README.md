@@ -201,7 +201,7 @@ one mapper and you lose the block-level parallelism that is the whole reason for
 
 ```powershell
 pip install -r requirements.txt
-streamlit run dashboard\app.py        # http://localhost:8501
+python -m streamlit run dashboard\app.py   # http://localhost:8501
 python sim\plots.py                   # report figures -> artifacts\figures\
 ```
 

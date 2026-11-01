@@ -1,7 +1,7 @@
 """
 Hadoop Line Control - interactive dashboard.
 
-    streamlit run dashboard/app.py
+    python -m streamlit run dashboard/app.py
 
 Reads what the pipeline already wrote (artifacts/, policy files), so every tab
 except "Cluster" works with the cluster stopped. The "Closed loop" tab can
