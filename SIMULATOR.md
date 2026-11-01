@@ -82,6 +82,29 @@ bottleneck job must find S03; a correct degradation job must find S04. If your
 jobs point somewhere else, they are wrong — which is exactly the check the old
 seed data could not give you.
 
+### Where the station parameters come from
+
+They are **synthetic**, not taken from a dataset, paper or real plant. Each
+value was chosen to be plausible in magnitude and to plant the ground truth
+above, so the MapReduce results can be validated against a known answer — which
+unlabelled real data cannot offer. No job reads `LINE`; they see only telemetry.
+
+| Column | Range | Rationale |
+|---|---|---|
+| nominal cycle | 10.5–14.8 s | tens-of-seconds robotic cells, close enough that the bottleneck is not obvious |
+| torque | 18–44 Nm | higher for heavy operations (weld, fasten), lower for vision-inspect |
+| sigma | ~4–5 % of torque | readings noisy but clearly centred |
+| wear rate | 0.30–2.30 ×10⁻⁴ / cycle | spread so the right PM interval genuinely differs per station |
+| defect base | 0.15–0.6 % | small baseline scrap, rising with wear and over-speed |
+
+The methods themselves follow standard sources: OEE (Nakajima, *Introduction to
+TPM*), constraint thinking (Goldratt, *The Goal*), tandem lines with blocking and
+starving (Buzacott & Shanthikumar, *Stochastic Models of Manufacturing Systems*),
+k-sigma control limits (Montgomery, *Introduction to Statistical Quality
+Control*) and the automation hierarchy (ISA-95 / IEC 62264). Public line data
+exists (e.g. Bosch's Kaggle set, NASA's prognostics repository) but cannot be
+re-run under a new policy, which closing the loop requires.
+
 ## Closing the loop
 
 Everything the line obeys is read from the policy file: `speed_setpoint`,
