@@ -119,8 +119,10 @@ mines genuinely change how the line behaves.
 python sim\run_ab.py --a policy_A.json --b artifacts\policy_B.json --seeds 20 --days 30 --split 20
 ```
 
-`--split 20` mines on days 1–20 and scores on days 21–30. Without it you are
-tuning and testing on the same data. `--seeds 20` runs paired seeds and reports
+`--split 20` scores only days 21–30, so each policy is judged after it has
+settled into its maintenance rhythm. The test is held out by seed: policy B is
+mined from the baseline run (seed 42) and scored on seeds 1–20, never on the
+data it was mined from. `--seeds 20` runs paired seeds and reports
 95% confidence intervals; a single seed swings several percent on noise alone.
 
 `policy_B_oracle.json` is a **reference, not a deliverable** — its PM intervals

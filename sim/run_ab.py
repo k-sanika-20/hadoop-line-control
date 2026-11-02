@@ -10,9 +10,10 @@ interval on the paired difference.
 Two properties this enforces, both of which are easy to get wrong and fatal if
 you do:
 
-  --split N   mine on days 1..N, evaluate on days N+1..end. Without it you are
-              tuning and testing on the same data, which is the same error as
-              reporting training accuracy.
+  --split N   score only days N+1..end, after each policy has settled into its
+              maintenance rhythm. The test is held out by seed: the policy is
+              mined from a different seed than the 1..K scored here, so it is
+              never tested on the data it was mined from.
 
   --seeds K   K independent runs, paired. A single seed proves nothing: this line
               swings several percent on noise alone.
@@ -39,7 +40,7 @@ METRICS = [
 
 
 def evaluate(policy, seed, days, split):
-    """Simulate the full horizon, then score only the held-out tail."""
+    """Simulate the full horizon, then score only the days after the warm-up."""
     stations, events, horizon_s = LS.simulate_line(policy, days, seed)
     if split:
         cut_ms = split * LS.SHIFT_SECONDS * 1000
@@ -66,7 +67,7 @@ def main():
     ap.add_argument("--seeds", type=int, default=20)
     ap.add_argument("--days", type=int, default=30)
     ap.add_argument("--split", type=int, default=20,
-                    help="mine on days 1..SPLIT, score on the rest; 0 disables the split")
+                    help="score only days SPLIT+1..end; 0 scores the whole run")
     ap.add_argument("--out", default="artifacts/results.json")
     args = ap.parse_args()
 

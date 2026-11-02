@@ -54,7 +54,9 @@ Four MapReduce jobs on YARN, policy regenerated, scored over 20 paired seeds on 
  
 ### Closed-loop evaluation
  
-Mined on days 1–20, scored on days 21–30, same seeds in both arms:
+Policy B was mined from the 7-day baseline run (seed 42) and scored on 20 different seeds
+(1–20), the same seeds in both arms. Each run lasts 30 days and only days 21–30 are scored, once
+the line has settled into its policy's maintenance rhythm:
  
 | Metric | A · static baseline | B · mined | Δ | 95% CI | Verdict |
 |---|---|---|---|---|---|
