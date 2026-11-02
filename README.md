@@ -4,6 +4,7 @@ A distributed control system for a **simulated** six-station robotic assembly li
 Hadoop is the plant-wide supervisory tier and the control loop actually closes through it.
  
 Course project for **IM60210 — Distributed Analytics for Industrial Automation**, IIT Kharagpur.
+The full write-up is in the [project report](docs/Hadoop_Line_Control_Report.pdf).
  
 ---
  
